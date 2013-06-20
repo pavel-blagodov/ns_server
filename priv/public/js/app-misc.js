@@ -315,7 +315,7 @@ _.extend(ViewHelpers, {
       body.call(element.get(0), element);
     });
 
-    return ["<span id='", id, "'></span>"].join('');
+    return jst.generateThisElement(id);
   },
 
   // assigns $.data on current element
@@ -323,18 +323,6 @@ _.extend(ViewHelpers, {
   setData: function (name, value) {
     return this.thisElement(function (thisElement) {
       $.data(thisElement.get(0), name, value);
-    });
-  },
-
-  setPercentBar: function (percents) {
-    return this.thisElement(function (q) {
-      percents = (percents << 0); // coerces NaN and infinities to 0
-      q.find('.used').css('width', String(percents)+'%');
-    });
-  },
-  setAttribute: function (name, value) {
-    return this.thisElement(function (q) {
-      q.attr(name, value);
     });
   },
   specialPluralizations: {
@@ -367,13 +355,6 @@ _.extend(ViewHelpers, {
     }
     return text;
   },
-  renderHealthClass: function (status) {
-    if (status == "healthy") {
-      return "up";
-    } else {
-      return "down";
-    }
-  },
   formatLogTStamp: function (ts) {
     return window.formatLogTStamp(ts);
   },
@@ -401,34 +382,6 @@ _.extend(ViewHelpers, {
   formatMemSize: function (value) {
     return this.formatQuantity(value, 'B', 1024, ' ');
   },
-
-  renderPendingStatus: function (node) {
-    if (node.clusterMembership == 'inactiveFailed') {
-      if (node.pendingEject) {
-        return "PENDING EJECT FAILED OVER";
-      } else {
-        return "FAILED OVER";
-      }
-    }
-    if (node.pendingEject) {
-      return "PENDING EJECT";
-    }
-    if (node.clusterMembership == 'active') {
-      return '';
-    }
-    if (node.clusterMembership == 'inactiveAdded') {
-      return 'PENDING ADD';
-    }
-    throw new Error('cannot reach');
-  },
-
-  ifNull: function (value, replacement) {
-    if (value == null || value == '') {
-      return replacement;
-    }
-    return value;
-  },
-
   maybeStripPort: (function () {
     var cachedAllServers;
     var cachedIsStripping;
@@ -481,10 +434,10 @@ function genericDialog(options) {
                      options);
   var text = options.text || 'No text.';
   options.title = options.header || '';
-  var dialogTemplate = $('#generic_dialog');
-  var dialog = $('<div></div>');
+  var dialogTemplate = $('#js_generic_dialog');
+  var dialog = jst.generateDiv();
   dialog.attr('class', dialogTemplate.attr('class'));
-  dialog.attr('id', _.uniqueId('generic_dialog_'));
+  dialog.attr('id', _.uniqueId('js_generic_dialog_'));
   dialog.html(dialogTemplate.html());
 
   function mkButtonCallback(name) {
@@ -494,7 +447,7 @@ function genericDialog(options) {
     }
   }
 
-  dialog.find('.dialog-text').html(options.textHTML || BRifyText(text));
+  dialog.find('.js_dialog-text').html(options.textHTML || BRifyText(text));
 
   var b = [];
   if (options.buttons.ok) {

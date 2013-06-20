@@ -8,6 +8,12 @@ var jst = (function () {
       li.appendChild(a);
 
       return li;
+    },
+    generateThisElement: function (id) {
+      return ["<span id='", id, "'></span>"].join('');
+    },
+    generateDiv: function () {
+      return $("<div />");
     }
   };
 })();
