@@ -357,7 +357,7 @@ var SetupWizard = {
 
     var data = ServersSection.validateJoinClusterParams(form);
     if (data.length) {
-      renderTemplate('join_cluster_dialog_errors', data, errorsContainer[0]);
+      renderTemplate('js_join_cluster_dialog_errors', data, errorsContainer[0]);
       errorsContainer.show();
       return;
     }
@@ -371,7 +371,7 @@ var SetupWizard = {
     jsonPostWithErrors('/node/controller/doJoinCluster', $.param(data), function (errors, status) {
       if (status != 'success') {
         overlay.remove();
-        renderTemplate('join_cluster_dialog_errors', errors, errorsContainer[0]);
+        renderTemplate('js_join_cluster_dialog_errors', errors, errorsContainer[0]);
         errorsContainer.show();
         return;
       }
@@ -703,7 +703,7 @@ var SetupWizard = {
           spinner.remove();
           var ok = (status == 'success');
           if (!ok) {
-            renderTemplate('join_cluster_dialog_errors', data, pathErrorsContainer[0]);
+            renderTemplate('js_join_cluster_dialog_errors', data, pathErrorsContainer[0]);
             pathErrorsContainer.show();
           }
           return ok;

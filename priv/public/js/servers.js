@@ -36,6 +36,7 @@ var ServersSection = {
     });
   },
   renderEverything: function () {
+    var self = this;
     this.detailsWidget.prepareDrawing();
 
     var details = this.poolDetails.value;
@@ -46,9 +47,9 @@ var ServersSection = {
     var pending = this.pending;
     var active = this.active;
 
-    this.serversQ.find('.add_button').toggle(!!(details && !rebalancing));
-    this.serversQ.find('.stop_rebalance_button').toggle(!!rebalancing);
-    this.serversQ.find('.stop_recovery_button').toggle(!!inRecovery);
+    $('#js_add_button', self.serversQ).toggle(!!(details && !rebalancing));
+    $('#js_stop_rebalance_button', self.serversQ).toggle(!!rebalancing);
+    $('#js_stop_recovery_button', self.serversQ).toggle(!!inRecovery);
 
     var mayRebalance = !rebalancing && !inRecovery && pending.length !=0;
 
@@ -64,59 +65,61 @@ var ServersSection = {
     if (unhealthyActive)
       mayRebalance = false;
 
-    var rebalanceButton = this.serversQ.find('.rebalance_button').toggle(!!details);
+    var rebalanceButton = $('#js_rebalance_button', self.serversQ).toggle(!!details);
     rebalanceButton.toggleClass('disabled', !mayRebalance);
 
     if (details && !rebalancing) {
-      $('#rebalance_tab .badge span').text(pending.length);
-      $('#rebalance_tab').toggleClass('badge_display', !!pending.length);
+      $('#js_rebalance_pend', self.serversQ).text(pending.length);
+      $('#js_rebalance_tab', self.serversQ).toggleClass('dynamic_badge_display', !!pending.length);
     } else {
-      $('#rebalance_tab').toggleClass('badge_display', false);
+      $('#js_rebalance_tab', self.serversQ).toggleClass('dynamic_badge_display', false);
     }
 
-    this.serversQ.toggleClass('rebalancing', !!rebalancing);
+    self.serversQ.toggleClass('dynamic_rebalancing', !!rebalancing);
 
     if (!details)
       return;
 
     if (active.length) {
-      renderTemplate('manage_server_list', {
+      renderTemplate('js_manage_server_list', {
         rows: active,
-        expandingAllowed: !IOCenter.staleness.value
-      }, $i('active_server_list_container'));
-      renderTemplate('manage_server_list', {
+        expandingAllowed: !IOCenter.staleness.value,
+        prefix: "active"
+      }, $i('js_active_server_list_container'));
+      renderTemplate('js_manage_server_list', {
         rows: pending,
-        expandingAllowed: true
-      }, $i('pending_server_list_container'));
+        expandingAllowed: true,
+        prefix: "pending"
+      }, $i('js_pending_server_list_container'));
     }
 
     if (rebalancing) {
-      $('#servers .add_button').hide();
+      $('#js_add_button', self.serversQ).hide();
       this.renderRebalance(details);
     }
 
     if (IOCenter.staleness.value) {
-      $('#servers .staleness-notice').show();
-      $('#servers').find('.add_button, .rebalance_button').hide();
-      $('#active_server_list_container, #pending_server_list_container').find('.re_add_button, .eject_server, .failover_server, .remove_from_list').addClass('disabled');
+      $('.js_staleness-notice', self.serversQ).show();
+      ('#js_add_button, #js_rebalance_button', self.serversQ).hide();
+      $('.js_re_add_button, .js_eject_server, .js_failover_server, .js_remove_from_list', self.serversQ).addClass('disabled');
     } else {
-      $('#servers .staleness-notice').hide();
-      $('#servers').find('.rebalance_button').show();
-      $('#servers .add_button')[rebalancing ? 'hide' : 'show']();
+      $('.js_staleness-notice', self.serversQ).hide();
+      $('#js_rebalance_button', self.serversQ).show();
+      $('#js_add_button', self.serversQ)[rebalancing ? 'hide' : 'show']();
     }
 
-    $('#active_server_list_container .last-active').find('.eject_server').addClass('disabled').end()
-      .find('.failover_server').addClass('disabled');
+    $('#js_active_server_list_container .dynamic_last-active').find('.js_eject_server').addClass('disabled').end()
+      .find('.js_failover_server').addClass('disabled');
 
-    $('#active_server_list_container .server_down .eject_server').addClass('disabled');
-    $('.failed_over .eject_server, .failed_over .failover_server').hide();
+    $('#js_active_server_list_container .dynamic_server_down .js_eject_server').addClass('disabled');
+    $('.dynamic_failed_over .js_eject_server, .dynamic_failed_over .js_failover_server').hide();
 
     if (inRecovery) {
-      $('#active_server_list_container, #pending_server_list_container').find('.re_add_button, .eject_server, .failover_server, .remove_from_list').addClass('disabled');
+      $('.js_re_add_button, .js_eject_server, .js_failover_server, .js_remove_from_list', self.serversQ).addClass('disabled');
     }
   },
-  renderServerDetails: function (item) {
-    return this.detailsWidget.renderItemDetails(item);
+  renderServerDetails: function (item, element) {
+    return this.detailsWidget.renderItemDetails(item, element);
   },
   renderRebalance: function (details) {
     var progress = this.rebalanceProgress.value;
@@ -135,7 +138,7 @@ var ServersSection = {
         p = emptyProgress;
       n.progress = p.progress;
       n.percent = truncateTo3Digits(n.progress);
-      $($i(n.otpNode.replace('@', '-'))).find('.actions').html('<span class="usage_info">' + escapeHTML(n.percent) + '% Complete</span><span class="server_usage"><span style="width: ' + escapeHTML(n.percent) + '%;"></span></span>');
+      $("#js_node_" + n.postFix).find('.js_actions').html(jst.serverActions(n));
     });
   },
   refreshEverything: function () {
@@ -173,15 +176,15 @@ var ServersSection = {
     });
 
     self.tabs = new TabsCell("serversTab",
-                             "#servers .tabs",
-                             "#servers .panes > div",
+                             "#servers .js_tabs",
+                             "#servers .js_panes > div",
                              ["active", "pending"]);
 
     var detailsWidget = self.detailsWidget = new MultiDrawersWidget({
       hashFragmentParam: 'openedServers',
-      template: 'server_details',
+      template: 'js_server_details',
       elementKey: 'otpNode',
-      placeholderCSS: '#servers .settings-placeholder',
+      placeholderCSS: '#servers .js_settings-placeholder',
       actionLink: 'openServer',
       actionLinkCallback: function () {
         ThePage.ensureSection('servers');
@@ -253,17 +256,18 @@ var ServersSection = {
         var serversCell = v.need(DAL.cells.serversCell);
         return serversCell.active.concat(serversCell.pending);
       }),
-      aroundRendering: function (originalRender, cell, container) {
+      aroundRendering: function (originalRender, cell, container, nodeInfo) {
         originalRender();
-        $(container).closest('tr').prev().find('.node_name .expander').toggleClass('closed', !cell.interested.value);
+        console.log($("#js_node_" + nodeInfo.postFix).find('.js_expander'))
+        $("#js_node_" + nodeInfo.postFix).find('.js_expander').toggleClass('dynamic_closed', !cell.interested.value);
       }
     });
 
     self.serversCell = DAL.cells.serversCell;
 
     self.poolDetails.subscribeValue(function (poolDetails) {
-      $($.makeArray($('#servers .failover_warning')).slice(1)).remove();
-      var warning = $('#servers .failover_warning');
+      $($.makeArray($('#servers .js_failover_warning')).slice(1)).remove();
+      var warning = $('#servers .js_failover_warning');
 
       if (!poolDetails || poolDetails.rebalanceStatus != 'none') {
         return;
@@ -298,19 +302,23 @@ var ServersSection = {
     self.serversCell.subscribeAny($m(self, "refreshEverything"));
     self.inRecoveryModeCell.subscribeAny($m(self, "refreshEverything"));
 
-    prepareTemplateForCell('active_server_list', self.serversCell);
-    prepareTemplateForCell('pending_server_list', self.serversCell);
+    prepareTemplateForCell('js_active_server_list', self.serversCell);
+    prepareTemplateForCell('js_pending_server_list', self.serversCell);
 
     var serversQ = self.serversQ = $('#servers');
 
-    serversQ.find('.rebalance_button').live('click', self.accountForDisabled($m(self, 'onRebalance')));
-    serversQ.find('.add_button').live('click', $m(self, 'onAdd'));
-    serversQ.find('.stop_rebalance_button').live('click', $m(self, 'onStopRebalance'));
-    serversQ.find('.stop_recovery_button').live('click', $m(self, 'onStopRecovery'));
+    serversQ.find('#js_rebalance_button').live('click', self.accountForDisabled($m(self, 'onRebalance')));
+    serversQ.find('#js_add_button').live('click', $m(self, 'onAdd'));
+    serversQ.find('#js_stop_rebalance_button').live('click', $m(self, 'onStopRebalance'));
+    serversQ.find('#js_stop_recovery_button').live('click', $m(self, 'onStopRecovery'));
 
     function mkServerRowHandler(handler) {
       return function (e) {
-        var serverRow = $(this).closest('.server_row').find('td:first-child').data('server') || $(this).closest('.add_back_row').next().find('td:first-child').data('server');
+        var postFix = $(this).attr("data-postfix");
+        console.log(postFix)
+        var parentRow = $("#js_node_" + postFix);
+        var reAddRow = $('#js_server_readd_set_' + postFix);
+        var serverRow = parentRow.data('server') || reAddRow.data('server');
         return handler.call(this, e, serverRow);
       }
     }
@@ -322,10 +330,10 @@ var ServersSection = {
       }));
     }
 
-    serversQ.find('.re_add_button').live('click', mkServerAction($m(self, 'reAddNode')));
-    serversQ.find('.eject_server').live('click', mkServerAction($m(self, 'ejectNode')));
-    serversQ.find('.failover_server').live('click', mkServerAction($m(self, 'failoverNode')));
-    serversQ.find('.remove_from_list').live('click', mkServerAction($m(self, 'removeFromList')));
+    serversQ.find('.js_re_add_button').live('click', mkServerAction($m(self, 'reAddNode')));
+    serversQ.find('.js_eject_server').live('click', mkServerAction($m(self, 'ejectNode')));
+    serversQ.find('.js_failover_server').live('click', mkServerAction($m(self, 'failoverNode')));
+    serversQ.find('.js_remove_from_list').live('click', mkServerAction($m(self, 'removeFromList')));
 
     self.rebalanceProgress = Cell.needing(DAL.cells.tasksProgressCell).computeEager(function (v, tasks) {
       for (var i = tasks.length; --i >= 0;) {
@@ -353,7 +361,7 @@ var ServersSection = {
   },
   renderUsage: function (e, totals, withQuotaTotal) {
     var options = {
-      topAttrs: {'class': "usage-block"},
+      topAttrs: {'class': "dynamic_usage-block"},
       topRight: ['Total', ViewHelpers.formatMemSize(totals.total)],
       items: [
         {name: 'In Use',
@@ -409,7 +417,7 @@ var ServersSection = {
     } else {
       var self = this;
       showDialogHijackingSave(
-        "stop_rebalance_confirmation_dialog", ".save_button",
+        "js_stop_rebalance_confirmation_dialog", ".js_save_button",
         function () {
           self.postAndReload(self.poolDetails.value.stopRebalanceUri, "");
         });
@@ -451,14 +459,14 @@ var ServersSection = {
 
     var uri = self.poolDetails.value.controllers.addNode.uri;
 
-    var dialog = $('#join_cluster_dialog');
-    var form = dialog.find('form');
-    $('#join_cluster_dialog_errors_container').empty();
-    $('#join_cluster_dialog form').get(0).reset();
+    var dialog = $('#js_join_cluster_dialog');
+    var form = $('#js_join_cluster_dialog_form');
+    $('#js_join_cluster_dialog_errors_container').empty();
+    form.get(0).reset();
     dialog.find("input:not([type]), input[type=text], input[type=password]").val('');
     dialog.find('[name=user]').val('Administrator');
 
-    showDialog('join_cluster_dialog', {
+    showDialog('js_join_cluster_dialog', {
       onHide: function () {
         form.unbind('submit');
       }});
@@ -467,23 +475,22 @@ var ServersSection = {
 
       var errorsOrData = self.validateJoinClusterParams(form);
       if (errorsOrData.length) {
-        renderTemplate('join_cluster_dialog_errors', errors);
+        renderTemplate('js_join_cluster_dialog_errors', errors);
         return;
       }
 
       var confirmed;
 
-      $('#join_cluster_dialog').addClass('overlayed')
-        .dialog('option', 'closeOnEscape', false);
-      showDialog('add_confirmation_dialog', {
+      $('#js_join_cluster_dialog').dialog('option', 'closeOnEscape', false);
+      showDialog('js_add_confirmation_dialog', {
         closeOnEscape: false,
-        eventBindings: [['.save_button', 'click', function (e) {
+        eventBindings: [['.js_save_button', 'click', function (e) {
           e.preventDefault();
           confirmed = true;
-          hideDialog('add_confirmation_dialog');
+          hideDialog('js_add_confirmation_dialog');
 
-          $('#join_cluster_dialog_errors_container').empty();
-          var overlay = overlayWithSpinner($($i('join_cluster_dialog')));
+          $('#js_join_cluster_dialog_errors_container').empty();
+          var overlay = overlayWithSpinner($($i('js_join_cluster_dialog')));
 
           self.poolDetails.setValue(undefined);
 
@@ -491,15 +498,14 @@ var ServersSection = {
             self.poolDetails.invalidate();
             overlay.remove();
             if (status != 'success') {
-              renderTemplate('join_cluster_dialog_errors', data)
+              renderTemplate('js_join_cluster_dialog_errors', data)
             } else {
-              hideDialog('join_cluster_dialog');
+              hideDialog('js_join_cluster_dialog');
             }
           })
         }]],
         onHide: function () {
-          $('#join_cluster_dialog').removeClass('overlayed')
-            .dialog('option', 'closeOnEscape', true);
+          $('#js_join_cluster_dialog').dialog('option', 'closeOnEscape', true);
         }
       });
     });
@@ -526,7 +532,7 @@ var ServersSection = {
     if (node.pendingEject)
       return;
 
-    showDialogHijackingSave("eject_confirmation_dialog", ".save_button", function () {
+    showDialogHijackingSave("js_eject_confirmation_dialog", ".js_save_button", function () {
       if (!self.poolDetails.value) {
           return;
       }
@@ -543,7 +549,7 @@ var ServersSection = {
   failoverNode: function (hostname) {
     var self = this;
     var node;
-    showDialogHijackingSave("failover_confirmation_dialog", ".save_button", function () {
+    showDialogHijackingSave("js_failover_confirmation_dialog", ".js_save_button", function () {
       if (!node)
         throw new Error("must not happen!");
       if (!self.poolDetails.value) {
@@ -552,31 +558,31 @@ var ServersSection = {
       self.postAndReload(self.poolDetails.value.controllers.failOver.uri,
                          {otpNode: node.otpNode}, undefined, {timeout: 120000});
     });
-    var dialog = $('#failover_confirmation_dialog');
-    var overlay = overlayWithSpinner(dialog.find('.content').need(1));
+    var dialog = $('#js_failover_confirmation_dialog');
+    var overlay = overlayWithSpinner(dialog.find('.js_content').need(1));
     var statusesCell = DAL.cells.nodeStatusesCell;
     statusesCell.setValue(undefined);
     statusesCell.invalidate();
     statusesCell.changedSlot.subscribeOnce(function () {
       overlay.remove();
-      dialog.find('.warning').hide();
+      dialog.find('.js_warning').hide();
       var statuses = statusesCell.value;
       node = statuses[hostname];
       if (!node) {
-        hideDialog("failover_confirmation_dialog");
+        hideDialog("js_failover_confirmation_dialog");
         return;
       }
 
       var backfill = node.replication < 1;
       var down = node.status != 'healthy';
-      var visibleWarning = dialog.find(['.warning', down ? 'down' : 'up', backfill ? 'backfill' : 'no_backfill'].join('_')).show();
-      dialog.find('.backfill_percent').text(truncateTo3Digits(node.replication * 100));
+      var visibleWarning = dialog.find(['.js_warning', down ? 'down' : 'up', backfill ? 'backfill' : 'no_backfill'].join('_')).show();
+
       var confirmation = visibleWarning.find('[name=confirmation]')
       if (confirmation.length) {
         confirmation.boolAttr('checked', false);
         function onChange() {
           var checked = !!confirmation.attr('checked');
-          dialog.find('.save_button').boolAttr('disabled', !checked);
+          dialog.find('.js_save_button').boolAttr('disabled', !checked);
         }
         function onHide() {
           confirmation.unbind('change', onChange);
@@ -586,7 +592,7 @@ var ServersSection = {
         dialog.bind('dialog:hide', onHide);
         onChange();
       } else {
-        dialog.find(".save_button").removeAttr("disabled");
+        dialog.find(".js_save_button").removeAttr("disabled");
       }
     });
   },

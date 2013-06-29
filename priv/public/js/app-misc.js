@@ -304,38 +304,8 @@ function renderCellTemplate(cell, to, options) {
 }
 
 _.extend(ViewHelpers, {
-  thisElement: function (body) {
-    var id = _.uniqueId("thisElement");
-
-    AfterTemplateHooks.push(function () {
-      var marker = $($i(id));
-      var element = marker.parent();
-      marker.remove();
-
-      body.call(element.get(0), element);
-    });
-
-    return ["<span id='", id, "'></span>"].join('');
-  },
-
-  // assigns $.data on current element
-  // use with {%= %} !
-  setData: function (name, value) {
-    return this.thisElement(function (thisElement) {
-      $.data(thisElement.get(0), name, value);
-    });
-  },
-
-  setPercentBar: function (percents) {
-    return this.thisElement(function (q) {
-      percents = (percents << 0); // coerces NaN and infinities to 0
-      q.find('.used').css('width', String(percents)+'%');
-    });
-  },
-  setAttribute: function (name, value) {
-    return this.thisElement(function (q) {
-      q.attr(name, value);
-    });
+  afterTemplateHooks: function (body) {
+    AfterTemplateHooks.push(body);
   },
   specialPluralizations: {
     'copy': 'copies'
@@ -367,13 +337,6 @@ _.extend(ViewHelpers, {
     }
     return text;
   },
-  renderHealthClass: function (status) {
-    if (status == "healthy") {
-      return "up";
-    } else {
-      return "down";
-    }
-  },
   formatLogTStamp: function (ts) {
     return window.formatLogTStamp(ts);
   },
@@ -401,34 +364,6 @@ _.extend(ViewHelpers, {
   formatMemSize: function (value) {
     return this.formatQuantity(value, 'B', 1024, ' ');
   },
-
-  renderPendingStatus: function (node) {
-    if (node.clusterMembership == 'inactiveFailed') {
-      if (node.pendingEject) {
-        return "PENDING EJECT FAILED OVER";
-      } else {
-        return "FAILED OVER";
-      }
-    }
-    if (node.pendingEject) {
-      return "PENDING EJECT";
-    }
-    if (node.clusterMembership == 'active') {
-      return '';
-    }
-    if (node.clusterMembership == 'inactiveAdded') {
-      return 'PENDING ADD';
-    }
-    throw new Error('cannot reach');
-  },
-
-  ifNull: function (value, replacement) {
-    if (value == null || value == '') {
-      return replacement;
-    }
-    return value;
-  },
-
   maybeStripPort: (function () {
     var cachedAllServers;
     var cachedIsStripping;
@@ -1259,11 +1194,11 @@ var MultiDrawersWidget = mkClass({
 
       var valueTransformer;
       if (self.options.valueTransformer) {
-        valueTransformer = (function (transformer) {
+        valueTransformer = (function (transformer, item) {
           return function (value) {
             return transformer(item, value);
           }
-        })(self.options.valueTransformer);
+        })(self.options.valueTransformer, item);
       }
 
       var renderer = mkCellRenderer([container, self.options.template], {
@@ -1274,11 +1209,11 @@ var MultiDrawersWidget = mkClass({
       }, detailsCell);
 
       if (self.options.aroundRendering) {
-        renderer = (function (renderer) {
+        renderer = (function (renderer, item) {
           return function () {
-            self.options.aroundRendering(renderer, detailsCell, container);
+            self.options.aroundRendering(renderer, detailsCell, container, item);
           }
-        })(renderer);
+        })(renderer, item);
       }
 
       // this makes sure we render when any of interesting cells change
@@ -1293,11 +1228,9 @@ var MultiDrawersWidget = mkClass({
 
     subscriptions.push(valueSubscription);
   },
-  renderItemDetails: function (item) {
+  renderItemDetails: function (item, element) {
     var self = this;
-    return ViewHelpers.thisElement(function (element) {
-      self.subscribeDetailsRendering(element, item);
-    });
+    self.subscribeDetailsRendering(element, item);
   },
   toggleElement: function (name) {
     if (_.include(this.openedNames.value, name)) {

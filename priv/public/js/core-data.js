@@ -412,16 +412,16 @@ var DAL = {
 
       var nodeClass = '';
       if (n.clusterMembership === 'inactiveFailed') {
-        nodeClass = n.status === 'unhealthy' ? 'server_down' : 'failed_over';
+        nodeClass = n.status === 'unhealthy' ? 'dynamic_server_down' : 'dynamic_failed_over';
       } else if (n.status === 'healthy') {
-        nodeClass = 'server_up';
+        nodeClass = 'dynamic_server_up';
       } else if (n.status === 'unhealthy') {
-        nodeClass = 'server_down';
+        nodeClass = 'dynamic_server_down';
       } else if (n.status === 'warmup') {
-        nodeClass = 'server_warmup';
+        nodeClass = 'dynamic_server_warmup';
       }
       if (n.lastActive) {
-        nodeClass += ' last-active';
+        nodeClass += ' dynamic_last-active';
       }
       n.nodeClass = nodeClass;
     });

@@ -590,7 +590,7 @@ var BucketDetailsDialog = mkClass({
 var BucketsSection = {
   renderRAMDetailsGauge: function (e, details) {
     var poolDetails = DAL.cells.currentPoolDetailsCell.value;
-    BucketDetailsDialog.prototype.renderGauge($(e).find('.for-ram'),
+    BucketDetailsDialog.prototype.renderGauge($(e),
                                               poolDetails.storageTotals.ram.quotaTotal,
                                               details.quota.ram,
                                               poolDetails.storageTotals.ram.quotaUsed - details.quota.ram);
@@ -626,7 +626,7 @@ var BucketsSection = {
   },
 
   renderHDDDetailsGauge: function (e, details) {
-    var jq = $(e).parent().find('.size-gauge.for-hdd'),
+    var jq = $(e),
         poolDetails = DAL.cells.currentPoolDetailsCell.value,
         hdd = poolDetails.storageTotals.hdd;
     BucketsSection.renderDiskGauge(jq,
@@ -707,7 +707,7 @@ var BucketsSection = {
       listCell: bucketsListCell,
       aroundRendering: function (originalRender, cell, container) {
         originalRender();
-        $(container).closest('tr').prev().find('.bucket_name .expander').toggleClass('closed', !cell.interested.value);
+        $(container).closest('tr').prev().find('.bucket_name .expander').toggleClass('dynamic_closed', !cell.interested.value);
       }
     });
 
@@ -818,8 +818,8 @@ var BucketsSection = {
       }
     });
   },
-  renderBucketDetails: function (item) {
-    return this.settingsWidget.renderItemDetails(item);
+  renderBucketDetails: function (item, element) {
+    return this.settingsWidget.renderItemDetails(item, element);
   },
   refreshBuckets: function (callback) {
     return DAL.cells.bucketsListCell.refresh(callback);
