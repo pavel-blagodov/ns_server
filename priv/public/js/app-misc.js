@@ -83,10 +83,10 @@ function setFormValues(form, values) {
 function formatUptime(seconds, precision) {
   precision = precision || 8;
 
-  var arr = [[86400, "days", "day"],
-             [3600, "hours", "hour"],
-             [60, "minutes", "minute"],
-             [1, "seconds", "second"]];
+  var arr = [[86400, "d", "d"],
+             [3600, "h", "h"],
+             [60, "m", "m"],
+             [1, "s", "s"]];
 
   var rv = [];
 

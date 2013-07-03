@@ -609,20 +609,14 @@ body.init_bucket_dialog #init_bucket_dialog { display: block; }
 */
 .btn_x {margin: 4px 0 0;width:25px;height:24px;background:url(../images/btn_x.png) no-repeat}
 
-.dynamic_server_up, .dynamic_server_down, .dynamic_failed_over, .dynamic_server_warmup, .pending_add {width:65px;padding: 0 !important;}
-.dynamic_server_up {background:transparent url(../images/server_status_icons_solid_bg.png) center 19px no-repeat !important;}
-.dynamic_server_down {background:transparent url(../images/server_status_icons_solid_bg.png) center -160px no-repeat !important;}
-.dynamic_failed_over , .dynamic_server_warmup, .pending_add {background:transparent url(../images/server_status_icons_solid_bg.png) center -310px no-repeat !important;}
+
 
 #servers h2 { height: 25px;}
 .servers_list ul {*margin:-1px 0 0;*position:relative;*top:1px;}
 .servers_list li {height-min:25px;display:block;padding:0 10px; *zoom:1;*margin:-2px 0 0;}
-.servers_list .server_row.dynamic_server_down {background:url(../images/server_status_icons.png) 10px -157px no-repeat; background-color:#61696c;border-color:#61696c;}
 .servers_list .not_active {text-align: left;}
 
-.servers_list .dynamic_server_warmup {background:url(../images/server_status_icons.png) 10px -308px no-repeat;}
-.servers_list .dynamic_failed_over .list_button {display:none;}
-.servers_list .dynamic_failed_over .serverName {color:#333; opacity:0.3;}
+
 .servers_list .rebalance_empty {padding:0 15px; background:none; color:#656565;}
 .servers_list .pending_add {background:url(../images/server_status_icons.png) 10px -309px no-repeat;}
 
@@ -656,8 +650,6 @@ ul.tabs .dynamic_badge_display .badge {display:block;}
 .dynamic_rebalancing li {display:block; position:relative;}
 .dynamic_rebalancing li a {text-decoration:none !important; cursor:default;}
 
-.failed_over_message {float:right; color:#9c9e9e; display:none;padding:1em}
-.dynamic_failed_over .failed_over_message {display:block;}
 
 .servers_list .serverName {display:inline-block; height:60px; padding:0 0 0 45px; background:url(../images/server_icon.png) 0 10px no-repeat; font-size:12px; font-weight:bolder; float:left;}
 .servers_list .serverName { color: #0095D6; }
@@ -1284,3 +1276,40 @@ input[type=number].size {width:4em;}
 .lined_tab .highlight td {background-color: #f5f5f7;}
 .lined_tab .swap_usage {color:#8a8a8d;}
 .lined_tab .name {max-width: 600px; word-wrap: break-word;}
+
+.status.dynamic_server_up {background-color: green;}
+.status.dynamic_server_down {background-color: red;}
+.status.dynamic_failed_over,
+.status.dynamic_server_warmup {background-color: yellow;}
+
+
+.server_item.dynamic_failed_over .list_button,
+.server_item .failed_over_message {display:none;}
+.server_item.dynamic_failed_over .failed_over_message {display:block;}
+/*.servers_list .dynamic_failed_over .serverName {color:#333; opacity:0.3;}*/
+
+.new_buttons {position: absolute; bottom: 0; left: 0; width: 100%; height: 20px; border-top: 1px solid grey;}
+.new_buttons .new_button {float: left; display: block; line-height: 20px; font-size: 10px; padding: 0 5px; border-right: 1px solid grey; background: #000;}
+.new_buttons > span {display: block; overflow: hidden; font-size: 10px;}
+
+.new_button {background: #fff; display: inline-block; padding: 5px 10px;}
+
+.server_item .status {height: 100%; width: 10px; float: left;}
+.server_item {height: 95px;border-bottom: 2px solid #fff;}
+.server_item .meta_data {float: left; font-size: 11px; position: relative; width: 238px; background: #000; color: #fff; height: 100%; -webkit-box-sizing: border-box;}
+.server_item .meta_data > div {position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;}
+.server_item .meta_data .addition_info_1 {z-index: 2; display: none; background-color: #000;}
+.server_item .usage_data {overflow: hidden;}
+.server_item .usage_data header,
+.server_item .usage_data section {font-size: 0;}
+.server_item .usage_data header div {font-size: 11px; padding: 5px 10px 0; height: 20px;}
+.server_item .usage_data header > :first-child,
+.server_item .usage_data section > :first-child {width: 12%; font-size: 11px;}
+.server_item .usage_data div {position: relative; display: inline-block; width: 22%; vertical-align: middle; white-space: nowrap; height: 30px; line-height: 20px; font-size: 12px; padding: 5px 10px; -webkit-box-sizing: border-box; color: #000;}
+.server_item div.in_precents {height: 30px; line-height: 30px;}
+.server_item .in_precents span {display: block; position: relative; height: 100%; background: #fff;}
+.server_item .in_precents i {display: block; position: absolute; top: 0; left: 0; height: 100%; background: #0095d6;}
+.server_item .in_precents u {display: block; text-decoration: none; position: absolute; top: 0; left: 10%; text-shadow: 0px 0px 8px #fff;}
+.server .shadow_box > header {background: #666; overflow: hidden; padding: 5px 10px; border-bottom: 2px solid #fff;}
+.server .shadow_box .buttons {float: right;}
+.server .shadow_box .tabs {float: left;}

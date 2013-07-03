@@ -184,7 +184,7 @@ var ServersSection = {
       hashFragmentParam: 'openedServers',
       template: 'js_server_details',
       elementKey: 'otpNode',
-      placeholderCSS: '#servers .js_settings-placeholder',
+      placeholderCSS: '#servers .js_addition_info_1',
       actionLink: 'openServer',
       actionLinkCallback: function () {
         ThePage.ensureSection('servers');
@@ -258,7 +258,6 @@ var ServersSection = {
       }),
       aroundRendering: function (originalRender, cell, container, nodeInfo) {
         originalRender();
-        console.log($("#js_node_" + nodeInfo.postFix).find('.js_expander'))
         $("#js_node_" + nodeInfo.postFix).find('.js_expander').toggleClass('dynamic_closed', !cell.interested.value);
       }
     });
@@ -315,10 +314,8 @@ var ServersSection = {
     function mkServerRowHandler(handler) {
       return function (e) {
         var postFix = $(this).attr("data-postfix");
-        console.log(postFix)
         var parentRow = $("#js_node_" + postFix);
-        var reAddRow = $('#js_server_readd_set_' + postFix);
-        var serverRow = parentRow.data('server') || reAddRow.data('server');
+        var serverRow = parentRow.data('server');
         return handler.call(this, e, serverRow);
       }
     }

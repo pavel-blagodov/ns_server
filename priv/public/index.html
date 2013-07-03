@@ -148,7 +148,7 @@
           </div>
         </div>
 
-        <div id="servers" style="display:none">
+        <div id="servers" class="server" style="display:none">
           <h1>Servers</h1>
           <div class="warning_message failover_warning js_failover_warning">
             Fail Over Warning: <span class="warning-text"></span>
@@ -160,184 +160,28 @@
             </a>
           </div>
           <div class="shadow_box">
-            <div class="header_2">
-              <span class="staleness-notice js_staleness-notice">Difficulties communicating with the cluster; displaying cached information!</span>
-              <a class="add_button btn_1" id="js_add_button"><span>Add Server</span></a>
-              <a class="rebalance_button btn_1" id="js_rebalance_button"><span>Rebalance</span></a>
-              <a class="stop_rebalance_button btn_1" id="js_stop_rebalance_button"><span>Stop Rebalance</span></a>
-              <a class="stop_recovery_button btn_1" id="js_stop_recovery_button"><span>Stop Recovery</span></a>
-              <ul class="tabs js_tabs">
-                <li class="tab_left"><a>Active Servers</a></li>
-                <li class="tab_right" id="js_rebalance_tab">
-                  <a>Pending Rebalance</a>
-                  <span class="badge"><span id="js_rebalance_pend">1</span></span>
-                </li>
-              </ul>
-            </div>
-            <div class="panes js_panes">
-              <div>
-                <div id="js_active_server_list_container" class="servers_list"></div>
-              </div><div>
-                <div id="js_pending_server_list_container" class="servers_list"></div>
+            <header>
+              <div class="buttons">
+                <span class="staleness-notice js_staleness-notice">Difficulties communicating with the cluster; displaying cached information!</span>
+                <a class="new_button" id="js_add_button"><span>Add Server</span></a>
+                <a class="new_button" id="js_rebalance_button"><span>Rebalance</span></a>
+                <a class="new_button" id="js_stop_rebalance_button"><span>Stop Rebalance</span></a>
+                <a class="new_button" id="js_stop_recovery_button"><span>Stop Recovery</span></a>
               </div>
-            </div>
+              <div class="tabs js_tabs">
+                <a class="new_button"><span>Active Servers</span></a>
+                <a class="new_button" id="js_rebalance_tab"><span>Pending Rebalance <span id="js_rebalance_pend">0</span></span></a>
+              </div>
+            </header>
+            <section class="js_panes">
+              <div id="js_active_server_list_container" class="servers_list"></div>
+              <div id="js_pending_server_list_container" class="servers_list"></div>
+            </section>
           </div>
-          <script id="js_manage_server_list_template" type="text/html">
-          <table class="list" style="width:100%">
-            <tbody>
-              <tr>
-                <th class="node_name" colspan="2" style="text-align:left;">Server Node Name</th>
-                <th></th>
-                <th>RAM Usage</th>
-                <th>Swap Usage</th>
-                <th>CPU Usage</th>
-                <th>Data/Disk Usage</th>
-                <th colspan="2" style="text-indent:18px;">Items (Active / Replica)</th>
-                <th></th>
-              </tr>
-            <!-- {% if (!rows.length) { %} -->
-              <tr class="server_row rebalance_empty">
-                <td colspan="10">There are no servers pending rebalance.</td>
-              </tr>
-            <!-- {% } %} -->
-            <!-- {% _.each(rows, function (s) {
-                      var postFix = _.uniqueId(prefix) %} -->
-            <!-- {% if (s.reAddPossible) { %} -->
-              <tr class="add_back_row" id="js_server_readd_set_{%= postFix %}">
-                  {% V.afterTemplateHooks(function () {
-                    $.data($("#js_server_readd_set_" + postFix).get(0), 'server', s);
-                  }); %}
-                <td colspan="10">
-                  <a href="#" class="add_back_btn js_re_add_button" data-postfix="{%= postFix %}"></a>
-                  <span class="add_b_message">This server is now reachable. Do you want to add it back to the cluster on the next rebalance?</span>
-                </td>
-              </tr>
-            <!-- {% } %} -->
-
-              <tr class="server_row {%= s.nodeClass %}" id="js_node_{%= postFix %}">
-                {% V.afterTemplateHooks(function () {
-                  $.data($("#js_node_" + postFix).get(0), 'server', s);
-                }); %}
-                <td class="node_name ellipsis" colspan="2">
-              <!-- {% if (s.reAddPossible) { %} -->
-                  <a href="#openServer={%= h(s.otpNode) %}"><ins class="expander closed js_expander"></ins></a>
-                  {%= V.stripPortHTML(s.hostname, rows) %}
-              <!-- {% } else { %} -->
-                  <!-- {% if (s.nodeClass == 'dynamic_server_down' || !expandingAllowed) { %} -->
-                  {%= h(s.hostname) %}
-                  <!-- {% } else { %} -->
-                  <a href="#openServer={%= h(s.otpNode) %}" title="Show Server Node info"><ins class="expander closed js_expander"></ins></a>
-                  <a href="#sec=analytics&statsHostname={%= h(s.hostname) %}" title="View Analytics for {%= h(s.hostname) %}">{%= V.stripPortHTML(s.hostname, rows) %}</a>
-                  <!-- {% } %} -->
-              <!-- {% } %} -->
-                </td>
-
-                <td class="{%= s.nodeClass %}"></td>
-
-                <td class="ram">
-                  <!-- {% if ((s.memoryTotal > 0) && isFinite(s.memoryFree)) { %} -->
-                  <div class="vertical_bar">
-                    <div class="used" style="height:{%= (s.memoryTotal - s.memoryFree) / s.memoryTotal * 100 %}%;top:{%= 105 - ((s.memoryTotal - s.memoryFree) / s.memoryTotal * 100) %}%"></div>
-                  </div>
-                  <div class="wrap">{%= h(truncateTo3Digits((s.memoryTotal - s.memoryFree) / s.memoryTotal * 100)) %}%</div>
-                  <!-- {% } else { %} -->
-                  <div class="not_active">N/A</div>
-                  <!-- {% } %} -->
-                </td>
-
-                <td class="ram">
-                  <!-- {% if (s.systemStats.swap_total > 0 && isFinite(s.systemStats.swap_used)) { %} -->
-                  <div class="vertical_bar">
-                    <div class="used" style="height:{%= s.systemStats.swap_used / s.systemStats.swap_total * 100 %}%;top:{%= 105 - (s.systemStats.swap_used / s.systemStats.swap_total * 100) %}%"></div>
-                  </div>
-                  <div class="wrap"> {%= h(truncateTo3Digits((s.systemStats.swap_used / s.systemStats.swap_total) * 100)) %}%</div>
-                  <!-- {% } else { %} -->
-                  <div class="not_active">N/A</div>
-                  <!-- {% } %} -->
-                </td>
-
-                <td class="ram">
-                  <!-- {% if (isFinite(s.systemStats.cpu_utilization_rate)) { %} -->
-                  <div class="vertical_bar">
-                    <div class="used" style="height:{%= Math.floor(s.systemStats.cpu_utilization_rate * 100) / 100 %}%;top:{%= 105 - (Math.floor(s.systemStats.cpu_utilization_rate * 100) / 100) %}%"></div>
-                  </div>
-                  <div class="wrap">{%= h(truncateTo3Digits(Math.floor(s.systemStats.cpu_utilization_rate * 100) / 100)) %}%</div>
-                  <!-- {% } else { %} -->
-                  <div class="not_active">N/A</div>
-                  <!-- {% } %} -->
-                </td>
-
-                <td class="ram">
-                  {%= (function (dataSize, diskUsage) {
-                         if (dataSize == null || diskUsage == null) {
-                           return "N/A";
-                         }
-                         return V.formatQuantity(dataSize) + " /<br>" + V.formatQuantity(diskUsage);
-                      })(s.couchDataSize, s.couchDiskUsage) %}
-                </td>
-
-                <td class="rep">
-                  {%= V.formatQuantity(s.interestingStats.curr_items || 0, '', 1000, ' ') %}/<br>
-                  {%= V.formatQuantity(s.interestingStats.vb_replica_curr_items || 0, '', 1000, ' ') %}
-                </td>
-
-                <!-- {% if (s.clusterMembership == 'inactiveAdded') { %} -->
-                <td colspan="2">
-                  <a href="#" class="list_button btn_cancel js_eject_server" data-postfix="{%= postFix %}"><span>Cancel</span></a>
-                  <span class="pending_add_message">Pending Add</span>
-                </td>
-                <!-- {% } else if (s.pendingEject) { %} -->
-                <td class="actions js_actions" colspan="2">
-                  <a href="#" class="list_button btn_cancel js_remove_from_list" data-postfix="{%= postFix %}"><span>Cancel</span></a>
-                  <span class="pending_add_message">Pending Removal</span>
-                </td>
-                <!-- {% } else { %} -->
-                <td class="actions js_actions" colspan="2">
-                  <a class="list_button js_eject_server" data-postfix="{%= postFix %}"><span>Remove</span></a>
-                  <a class="list_button failover_server js_failover_server" data-postfix="{%= postFix %}"><span>Fail Over</span></a>
-                  <span class="failed_over_message">Failed Over: Pending Removal</span>
-                </td>
-                <!-- {% } %} -->
-
-              </tr>
-            <!-- {% if (expandingAllowed) { %} -->
-              <tr><td colspan="10" class="settings-placeholder js_settings-placeholder" style="display:none;" id="js_server_settings_{%= postFix %}">
-                {%
-                 s.postFix = postFix;
-                 V.afterTemplateHooks(function () {
-                  ServersSection.renderServerDetails($.extend({}, s), $("#js_server_settings_" + postFix ))
-                 });
-                %}
-              </td></tr>
-            <!-- {% } %} -->
-          <!-- {% }); %} -->
-            </tbody>
-          </table>
-          </script>
-
           <script id="js_server_details_template" type="text/html">
-          <div class="first gong_rb">
-            <div class="pad">
-              <a class="edit_btn float_right disabled">Edit</a>
-              <table class="properties_table">
-                <tr>
-                    <td>Server Name: <span>{%= h(hostname) %}</span></td>
-                    <td>Uptime: <span>{%= h(formatUptime(uptime)) %}</span></td>
-                </tr>
-                <tr>
-                    <td>OS: <span>{%= h(os) %}</span></td>
-                    <td>Version: <span>{%= h(DAL.prettyVersion(version, true)) %}</span></td>
-                </tr>
-              </table>
-            </div>
-            <div class="side side_1"></div>
-            <div class="side side_2"></div>
-            <div class="side side_3"></div>
-            <div class="side side_4"></div>
-          </div>
-          <div class="additional_server_info">
             <!-- {% if (detailedProgress) { %}-->
               <h3>Rebalance Progress</h3>
+              <div class="js_actions"></div>
               <div class="rebalance_progress">
 
                 <!-- {% if (detailedProgress.outgoing) { %} -->
@@ -394,29 +238,106 @@
                 <!-- {% } %}-->
 
               </div>
-            <!-- {% } %}-->
-            <h3>Memory Cache</h3>
-            <div class="info_block">
-              <span class="memory_dynamic_ram">Dynamic RAM:</span>
-              <div id="js_server_ram_{%= postFix %}">
-                {% V.afterTemplateHooks(function () {
-                  ServersSection.renderUsage($("#js_server_ram_" + postFix), obj.storageTotals.ram, true)
-                }); %}
-              </div>
+            <!-- {% } else { %}-->
+                  rebalance not runnig now
+                <!-- {% } %}-->
+            <div class="new_buttons">
+              <a class="new_button" href="#openServer={%= h(otpNode) %}">Back</a>
             </div>
-            <h3>Disk Storage</h3>
-            <div class="info_block">
-              <span class="disk_storage">
-                <span>Disk One: </span>
-                  <span class="path" title="{%= h(storage.hdd[0].path) %}">{%= h(V.ellipsisiseOnLeft(storage.hdd[0].path || "", 25))  %}</span>
-              </span>
-              <div id="js_server_disk_{%= postFix %}">
-                {% V.afterTemplateHooks(function () {
-                  ServersSection.renderUsage($("#js_server_disk_" + postFix), obj.storageTotals.hdd)
+          </script>
+          <script id="js_manage_server_list_template" type="text/html">
+            {% if (!rows.length) { %}
+              <div class="server_item rebalance_empty">There are no servers pending rebalance.</div>
+            {% } %}
+            {% _.each(rows, function (s) {
+              var postFix = _.uniqueId(prefix);
+              var system = s.systemStats || {};
+              var ram = s.storageTotals.ram || {};
+              var hdd = s.storageTotals.hdd || {}; %}
+
+              <div class="server_item {%= s.nodeClass %}" id="js_node_{%= postFix %}">
+               {% V.afterTemplateHooks(function () {
+                  $.data($("#js_node_" + postFix).get(0), 'server', s);
                 }); %}
+                <div class="status {%= s.nodeClass %}">
+                </div>
+                <div class="meta_data">
+                  <div class="js_addition_info_1 addition_info_1" id="js_server_settings_{%= postFix %}"></div>
+                  {% s.postFix = postFix;
+                  V.afterTemplateHooks(function () {
+                    ServersSection.renderServerDetails($.extend({}, s), $("#js_server_settings_" + postFix ));
+                  }); %}
+                  <div class="addition_info_2">
+                    Name: {%= h(s.hostname) %}</br>
+                    Uptime: {%= h(formatUptime(s.uptime)) %}<br>
+                    OS: {%= h(s.os) %}<br>
+                    Version: {%= h(DAL.prettyVersion(s.version, true)) %}<br>
+                    CPU Usage: {%= h(truncateTo3Digits(Math.floor(s.systemStats.cpu_utilization_rate * 100) / 100)) %}%<br>
+                    Swap Usage: {%= h(truncateTo3Digits((s.systemStats.swap_used / s.systemStats.swap_total) * 100)) %}%
+                    {% if (s.clusterMembership == 'inactiveAdded') { %}
+                      Pending: Pending Add
+                    {% } else if (s.pendingEject) { %}
+                      Pending: Pending Removal
+                    {% } else { %}
+                      <span class="failed_over_message">Failed Over: Pending Removal</span>
+                    {% } %}
+                    <div class="new_buttons">
+                    {% if (s.reAddPossible || s.nodeClass == 'dynamic_server_down' || !expandingAllowed) {} else { %}
+                      <a class="new_button" href="#sec=analytics&statsHostname={%=h(s.hostname)%}" title="View Analytics for {%= h(s.hostname) %}">
+                      <span>View</span></a>
+                    {% } %}
+                    {% if (s.reAddPossible) { %}
+                      <a href="#" class="new_button js_re_add_button" data-postfix="{%= postFix %}" title="This server is now reachable. Do you want to add it back to the cluster on the next rebalance?">
+                        <span>Readd</span>
+                      </a>
+                    {% } %}
+                    {% if (s.clusterMembership == 'inactiveAdded') { %}
+                      <a href="#" class="new_button js_eject_server" data-postfix="{%= postFix %}">
+                        <span>Cancel</span>
+                      </a>
+                    {% } else if (s.pendingEject) { %}
+                      <a href="#" class="new_button js_remove_from_list" data-postfix="{%= postFix %}">
+                        <span>Cancel</span>
+                      </a>
+                    {% } else { %}
+                      <a class="new_button js_eject_server" data-postfix="{%= postFix %}">
+                        <span>Remove</span>
+                      </a>
+                      <a class="new_button js_failover_server" data-postfix="{%= postFix %}">
+                        <span>Fail Over</span>
+                      </a>
+                    {% } %}
+                      <a class="new_button" href="#openServer={%= h(s.otpNode) %}">
+                        <span>Rebalance Details</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="usage_data">
+                  <header>
+                    <div>&nbsp;</div>
+                    <div>Total</div>
+                    <div>In Use</div>
+                    <div>Other</div>
+                    <div>Free</div>
+                  </header>
+                  <section>
+                    <div>Memory Cache</div>
+                    {%= jst.serverBar(ram.total ? 100 : 0, ram.total) %}
+                    {%= jst.serverBar(ram.usedByData / ram.total * 100 , ram.usedByData) %}
+                    {%= jst.serverBar((ram.used - ram.usedByData) / ram.total * 100, ram.used - ram.usedByData) %}
+                    {%= jst.serverBar((ram.total - ram.used) / ram.total * 100, ram.total - ram.used) %}
+                  </section>
+                  <section>
+                    <div>Disk Storage</div>
+                    {%= jst.serverBar(ram.total ? 100 : 0, hdd.total) %}
+                    {%= jst.serverBar(hdd.usedByData / hdd.total * 100, hdd.usedByData) %}
+                    {%= jst.serverBar((hdd.used - hdd.usedByData) / hdd.total * 100, hdd.used - hdd.usedByData) %}
+                    {%= jst.serverBar((hdd.total - hdd.used) / hdd.total * 100, hdd.total - hdd.used) %}
+                  </section>
+                </div>
               </div>
-            </div>
-          </div><!-- additional_server_info -->
+            {% }); %}
           </script>
         </div>
 

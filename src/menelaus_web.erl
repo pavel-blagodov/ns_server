@@ -806,8 +806,7 @@ handle_pool_info_wait_tail(Req, Id, UserPassword, LocalAddr, ETag) ->
 build_pool_info(Id, UserPassword, InfoLevel, LocalAddr) ->
     UUID = get_uuid(),
 
-    F = build_nodes_info_fun(menelaus_auth:check_auth(UserPassword), InfoLevel, LocalAddr),
-    Nodes = [F(N, undefined) || N <- ns_node_disco:nodes_wanted()],
+    Nodes = [build_full_node_info(N, menelaus_auth:check_auth(UserPassword), InfoLevel, LocalAddr) || N <- ns_node_disco:nodes_wanted()],
     Config = ns_config:get(),
     BucketsVer = erlang:phash2(ns_bucket:get_bucket_names(Config))
         bxor erlang:phash2([{proplists:get_value(hostname, KV),
@@ -1797,8 +1796,7 @@ handle_node(_PoolId, Node, Req) ->
             reply_json(Req, <<"Node is unknown to this cluster.">>, 404)
     end.
 
-build_full_node_info(Node, LocalAddr) ->
-    {struct, KV} = (build_nodes_info_fun(true, normal, LocalAddr))(Node, undefined),
+build_full_node_info_f(KV, Node) ->
     MemQuota = case ns_storage_conf:memory_quota(Node) of
                    undefined -> <<"">>;
                    Y    -> Y
@@ -1817,6 +1815,14 @@ build_full_node_info(Node, LocalAddr) ->
               {storage, R}] ++ KV,
     {struct, lists:filter(fun (X) -> X =/= undefined end,
                                    Fields)}.
+
+build_full_node_info(Node, IncludeOtp, InfoLevel, LocalAddr) ->
+    {struct, KV} = (build_nodes_info_fun(IncludeOtp, InfoLevel, LocalAddr))(Node, undefined),
+    build_full_node_info_f(KV, Node).
+
+build_full_node_info(Node, LocalAddr) ->
+    {struct, KV} = (build_nodes_info_fun(true, normal, LocalAddr))(Node, undefined),
+    build_full_node_info_f(KV, Node).
 
 % S = [{ssd, []},
 %      {hdd, [[{path, /some/nice/disk/path}, {quotaMb, 1234}, {state, ok}],
