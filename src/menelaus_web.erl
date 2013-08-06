@@ -1509,7 +1509,7 @@ handle_settings_read_only_user_delete(Req) ->
         false ->
             reply_json(Req, <<"Read-Only admin does not exist">>, 404);
         true ->
-            ns_config:set(read_only_user_creds, false),
+            ns_config:set(read_only_user_creds, undefined),
             reply_json(Req, [], 200)
     end.
 
