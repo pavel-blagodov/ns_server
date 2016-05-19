@@ -2,12 +2,15 @@
 <html data-ng-app="app">
   <head>
     <title ng-bind="mnTitle">Couchbase Console</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" type="text/css" href="app/app.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- <link rel="stylesheet" type="text/css" href="app/app.css"> -->
     <link rel="stylesheet" type="text/css" href="template/modal/modal.css">
     <link rel="stylesheet" type="text/css" href="libs/selectize.default.css">
     <link rel="stylesheet" type="text/css" href="libs/angular-ui-select.css">
     <link rel="stylesheet" type="text/css" href="libs/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="libs/nv.d3.css">
 
     <script src="libs/codemirror.js"></script>
     <script src="libs/codemirror.javascript.js"></script>
@@ -23,6 +26,10 @@
     <script src="libs/angular-ui-select.js"></script>
     <script src="libs/angular-ui-codemirror.js"></script>
     <script src="libs/angular-chartist.js"></script>
+
+    <script src="libs/d3.js"></script>
+    <script src="libs/nv.d3.js"></script>
+    <script src="libs/angular-nvd3.js"></script>
 
     <script src="libs/lodash.compat.js"></script>
 
@@ -46,6 +53,10 @@
     <script src="app/mn_admin/mn_analytics/mn_analytics_list_controller.js"></script>
     <script src="app/mn_admin/mn_analytics/mn_analytics_list_graph_controller.js"></script>
     <script src="app/mn_admin/mn_analytics/mn_analytics_service.js"></script>
+
+    <script src="app/mn_admin/mn_analytics_new/mn_analytics_service.js"></script>
+    <script src="app/mn_admin/mn_analytics_new/mn_analytics_controller.js"></script>
+    <script src="app/mn_admin/mn_analytics_new/chart_builder/mn_analytics_chart_builder_controller.js"></script>
 
     <script src="app/mn_admin/mn_servers/mn_servers_controller.js"></script>
     <script src="app/mn_admin/mn_servers/list/mn_servers_list_controller.js"></script>
@@ -191,6 +202,8 @@
     <script src="app/components/directives/mn_memory_quota/mn_memory_quota.js"></script>
     <script src="app/components/directives/mn_memory_quota/mn_memory_quota_service.js"></script>
     <script src="app/components/directives/mn_services/mn_services.js"></script>
+    <script src="app/components/directives/mn_nav/mn_nav.js"></script>
+    <script src="app/components/directives/mn_header/mn_header.js"></script>
 
     <script src="app/components/mn_filters.js"></script>
     <script src="app/components/mn_jquery.js"></script>

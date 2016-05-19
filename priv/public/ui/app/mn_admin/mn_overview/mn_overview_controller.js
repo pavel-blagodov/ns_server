@@ -8,7 +8,9 @@
     'mnServersService',
     'mnBucketsService',
     'mnPoll',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'mnNav',
+    'mnHeader'
   ]).controller('mnOverviewController', mnOverviewController);
 
   function mnOverviewController($scope, mnServersService, mnBucketsService, mnOverviewService, mnPoller, mnAlertsService) {

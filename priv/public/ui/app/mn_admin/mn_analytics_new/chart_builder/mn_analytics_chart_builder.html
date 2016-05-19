@@ -1,0 +1,46 @@
+<h1>Chart Builder</h1>
+<p>
+  Choosing more than 4 statistic to display on one axis can get messy.<br>
+  Try a simpler chart or add a secondary Y-axis.
+</p>
+<form
+  mn-spinner="chartBuilderCtl.viewLoading"
+  ng-submit="chartBuilderCtl.create()">
+  <ul>
+    <li ng-repeat="bucket in chartBuilderCtl.buckets">
+      <input
+        type="radio"
+        group="bucket"
+        value="{{bucket.name}}"
+        id="bucket-{{bucket.name}}-input"
+        ng-model="chartBuilderCtl.newChart.bucket"
+        ng-change="chartBuilderCtl.selectBucket();"><lable for="bucket-{{bucket.name}}-input">bucket: {{bucket.name}}</lable>
+    </li>
+  </ul>
+  <h4 ng-show="chartBuilderCtl.statsDirectoryBlocks.length">Category Filters</h4>
+  <ul>
+    <li ng-repeat="block in chartBuilderCtl.statsDirectoryBlocks track by block.blockName">
+      <input
+        id="block-{{block.blockName}}-checkbox"
+        type="checkbox"
+        ng-true-value="[]"
+        ng-model="chartBuilderCtl.newChart.block[block.blockName]"><label for="block-{{block.blockName}}-checkbox">{{block.blockName}}</label>
+    </li>
+  </ul>
+  <h4 ng-show="chartBuilderCtl.statsDirectoryBlocks.length">Stats to Display</h4>
+  <ul
+    ng-repeat="block in chartBuilderCtl.statsDirectoryBlocks track by block.blockName"
+    ng-if="chartBuilderCtl.newChart.block[block.blockName]">
+    <li ng-repeat="stat in block.stats track by stat.name">
+      <input
+        id="stat-{{stat.name}}-checkbox"
+        type="checkbox"
+        ng-true-value="{{stat | json}}"
+        ng-model="chartBuilderCtl.newChart.block[block.blockName][$index]"><label for="stat-{{stat.name}}-checkbox">{{stat.title}}</label>
+    </li>
+  </ul>
+  <div>
+    <a ng-click="$dismiss()">Cancel</a>
+    <button type="submit">Display Selected Stats</button>
+  </div>
+</form>

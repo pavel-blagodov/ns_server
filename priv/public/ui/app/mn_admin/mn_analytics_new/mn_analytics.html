@@ -1,0 +1,36 @@
+<mn-header>
+  <mn-breadcrumb>
+    <span class="hide-for-small">Monitoring  &#62; </span>Chart Builder
+  </mn-breadcrumb>
+  <mn-controls>
+    <a href="#">EXPORT</a>
+    <a class="link-add" ng-click="analyticsNewCtl.openChartBuilderDialog()">+ ADD CHART</a>
+  </mn-controls>
+</mn-header>
+
+<main>
+  <div style="width: 200px;">
+    <select ng-model="analyticsNewCtl.buckets.bucketsNames.selected" ng-change="analyticsNewCtl.onSelectBucket()">
+      <option ng-repeat="bucketName in analyticsNewCtl.buckets.bucketsNames" value="{{bucketName}}">
+        {{bucketName}}
+      </option>
+    </select>
+    <ul>
+    <li ng-repeat="block in analyticsNewCtl.statsDirectoryBlocks track by block.blockName">
+      <input
+        id="block-{{block.blockName}}-checkbox"
+        type="checkbox"
+        ng-model="analyticsNewCtl.showBlocks[block.blockName]"><label for="block-{{block.blockName}}-checkbox">{{block.blockName}}</label>
+    </li>
+  </ul>
+  </div>
+  <div style="width: calc(100% - 200px)";>
+    <div
+      ng-repeat="(name, block) in analyticsNewCtl.analyticsService.chartsByBlock"
+      ng-if="analyticsNewCtl.showBlocks[name]">
+        <h4>{{name}}</h4>
+        <div ng-repeat="(id, stats) in block" mn-analytics-chart stats="stats" id="id" holder="block">
+        </div>
+    </div>
+  </div>
+</main>

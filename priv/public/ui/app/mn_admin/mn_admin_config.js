@@ -9,6 +9,7 @@
     'mnPromiseHelper',
     'mnBuckets',
     'mnAnalytics',
+    'mnAnalyticsNew',
     'mnLogs',
     'mnOverview',
     'mnIndexes',
@@ -103,6 +104,22 @@
         url: '/:documentId',
         controller: 'mnDocumentsEditingController as documentsEditingCtl',
         templateUrl: 'app/mn_admin/mn_documents/editing/mn_documents_editing.html'
+      })
+      .state('app.admin.analyticsNew', {
+        url: '/analyticsNew?statsHostname&openedStatsBlock&analyticsBucket&specificStat&zoom&graph',
+        controller: 'mnAnalyticsNewController as analyticsNewCtl',
+        templateUrl: 'app/mn_admin/mn_analytics_new/mn_analytics.html',
+        params: {
+          analyticsBucket: {
+            value: null
+          },
+          zoom: {
+            value: 'minute'
+          }
+        },
+        resolve: {
+          setDefaultBucketName: mnHelperProvider.setDefaultBucketName("analyticsBucket", 'app.admin.analyticsNew', true)
+        }
       })
       .state('app.admin.analytics', {
         abstract: true,
