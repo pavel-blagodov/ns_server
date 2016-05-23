@@ -11,8 +11,7 @@
     $stateProvider
       .state('app.admin.security', {
         abstract: true,
-        controller: "mnSecurityController as securityCtl",
-        templateUrl: "app/mn_admin/mn_security/mn_security.html",
+        template: "<ui-view></ui-view>",
         permissions: "cluster.admin.security.read"
       })
       .state('app.admin.security.externalRoles', {
