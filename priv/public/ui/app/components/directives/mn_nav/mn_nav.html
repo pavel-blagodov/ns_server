@@ -5,26 +5,21 @@
   <h5>monitoring
       <a
          mn-tab="overview"
-         ui-sref="app.admin.overview"
-         ui-sref-active="currentNav">Dashboard</a>
+         ui-sref="app.admin.overview">Dashboard</a>
       <a
          mn-tab="logs"
          ui-sref="app.admin.logs.list"
-         ng-class="{currentNav: ('app.admin.logs' | includedByState)}"
          ng-show="rbac.cluster.logs.read">Log</a>
   </h5>
   <h5>cluster
       <a
          mn-tab="servers"
-         ui-sref-active="currentNav"
          ui-sref="app.admin.servers.list">Servers</a>
       <a
          mn-tab="replications"
-         ui-sref-active="currentNav"
          ui-sref="app.admin.replications">XDCR</a>
       <a
          mn-tab="settings"
-         ng-class="{currentNav: ('app.admin.settings' | includedByState)}"
          ui-sref="app.admin.settings.cluster">Settings
         <span
            ng-show="adminCtl.updates.sendStats && !!adminCtl.updates.newVersion"
@@ -32,7 +27,6 @@
       </a>
       <span
          mn-tab="security"
-         ng-class="{currentNav: ('app.admin.security' | includedByState)}"
          ng-show="rbac.cluster.admin.security.read && (pools.isEnterprise || rbac.cluster.admin.security.write)">
         <a
            ui-sref="app.admin.security.externalRoles"
@@ -48,11 +42,9 @@
   <h5>data
     <a
        mn-tab="buckets"
-       ui-sref="app.admin.buckets"
-       ui-sref-active="currentNav">Data Buckets</a>
+       ui-sref="app.admin.buckets">Data Buckets</a>
     <a
        mn-tab="indexes"
-       ng-class="{currentNav: ('app.admin.indexes' | includedByState)}"
        ui-sref="app.admin.indexes.gsi">
       <span
          ui-sref="app.admin.indexes.gsi"
