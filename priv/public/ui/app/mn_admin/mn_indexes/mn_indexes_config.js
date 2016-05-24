@@ -11,8 +11,7 @@
     $stateProvider
       .state('app.admin.indexes', {
         abstract: true,
-        controller: "mnIndexesController as indexesCtl",
-        templateUrl: "app/mn_admin/mn_indexes/mn_indexes.html"
+        template: "<ui-view></ui-view>"
       })
       .state('app.admin.indexes.views', {
         abstract: true,

@@ -48,15 +48,13 @@
     <a
        mn-tab="buckets"
        ui-sref="app.admin.buckets">Data Buckets</a>
-    <a
-       mn-tab="indexes"
-       ui-sref="app.admin.indexes.gsi">
-      <span
-         ui-sref="app.admin.indexes.gsi"
-         ng-show="rbac.cluster.indexes.read">Indexes</span>
-      <span
-         ui-sref="app.admin.indexes.views.list"
-         ng-show="rbac.cluster.indexes.read === false">Indexes</span>
-    </a>
+    <span mn-pluggable-ui-tabs mn-tab-bar-name="indexesTab">
+      <a
+         ng-show="rbac.cluster.indexes.read"
+         ui-sref="app.admin.indexes.gsi">Global Indexes</a>
+      <a
+         ng-show="rbac.cluster.pools.read"
+         ui-sref="app.admin.indexes.views.list">Views</a>
+    </span>
   </h5>
 </nav>
