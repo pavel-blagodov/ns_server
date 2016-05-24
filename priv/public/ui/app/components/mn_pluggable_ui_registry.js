@@ -8,18 +8,14 @@
     .directive('mnPluggableUiTabs', mnPluggableUiTabs);
 
   function mnPluggableTabUtil() {
-    var defaultTemplate = "<a ng-show=\"{{::pluggableUiConfig.ngShow}}\" ui-sref=\"{{ ::pluggableUiConfig.state }}\">{{ ::pluggableUiConfig.name }}</a>";
-    var tabTemplates = {
-      adminTab:    "<a ng-show=\"{{::pluggableUiConfig.ngShow}}\" ui-sref=\"{{ ::pluggableUiConfig.state}}\">{{ ::pluggableUiConfig.name }}</a>",
-      indexesTab:  "<li ng-show=\"{{::pluggableUiConfig.ngShow}}\" ><a ui-sref=\"{{::pluggableUiConfig.state }}\">{{ ::pluggableUiConfig.name }}</a></li>"
-    };
 
     return {
       getTabTemplate: getTabTemplate
     };
 
-    function getTabTemplate(tabBarName) {
-      return tabTemplates[tabBarName] || defaultTemplate;
+    function getTabTemplate(tabBarName, index) {
+      var configLocation = "::" + tabBarName + ".pluggableUiConfigs[" + index + "]";
+      return "<a ng-show=\"{{" + configLocation + ".ngShow}}\" ui-sref=\"{{" + configLocation + ".state}}\">{{" + configLocation + ".name}}</a>";
     }
   }
 
@@ -34,18 +30,20 @@
       if (!pluggableUiConfigs.length) {
         return;
       }
-      angular.forEach(pluggableUiConfigs, function (config) {
+      $scope[$attrs.mnTabBarName] = {
+        pluggableUiConfigs: pluggableUiConfigs
+      };
+      angular.forEach(pluggableUiConfigs, function (config, index) {
         config.ngShow = config.ngShow || true;
-        $scope.pluggableUiConfig = config;
         if (config.after) {
           var targetTab = $element[0].querySelector("[mn-tab='" + config.after + "']");
           if (!targetTab) {
             throw new Error("There is no tab with mn-tab=" + config.after + " in " + $attrs.mnTabBarName);
           }
-          var compiled = $compile(mnPluggableTabUtil.getTabTemplate($attrs.mnTabBarName))($scope);
+          var compiled = $compile(mnPluggableTabUtil.getTabTemplate($attrs.mnTabBarName, index))($scope);
           angular.element(targetTab).after(compiled);
         } else {
-          var compiled = $compile(mnPluggableTabUtil.getTabTemplate($attrs.mnTabBarName))($scope);
+          var compiled = $compile(mnPluggableTabUtil.getTabTemplate($attrs.mnTabBarName, index))($scope);
           $element.append(compiled);
         }
       });
