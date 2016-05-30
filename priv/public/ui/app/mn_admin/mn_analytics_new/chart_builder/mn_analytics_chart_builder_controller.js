@@ -11,7 +11,8 @@
     vm.create = create;
 
     vm.newChart = {
-      stats: []
+      stats: [],
+      size: "450"
     };
 
     activate();
@@ -30,8 +31,12 @@
     function create() {
       var chartsByBlock = JSON.parse(localStorage.getItem('mnAnalyticsNewCharts')) || {};
       var chartId = new Date().getTime();
-      chartsByBlock[blockName] = chartsByBlock[blockName] || {};
-      chartsByBlock[blockName][chartId] = _.compact(vm.newChart.stats);
+      chartsByBlock[blockName] = chartsByBlock[blockName] || [];
+      chartsByBlock[blockName].push({
+        stats: _.compact(vm.newChart.stats),
+        size: vm.newChart.size,
+        id: chartId
+      });
       mnAnalyticsNewService.export.chartsByBlock = chartsByBlock;
       localStorage.setItem('mnAnalyticsNewCharts', JSON.stringify(chartsByBlock));
     }

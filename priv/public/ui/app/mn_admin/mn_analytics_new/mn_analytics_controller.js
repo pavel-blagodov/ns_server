@@ -23,7 +23,8 @@
         stats: "=",
         id: "@",
         holder: "=",
-        nodes: "="
+        nodes: "=",
+        height: "="
       },
       controller: controller
     };
@@ -33,7 +34,7 @@
       $scope.options = {
         chart: {
           type: 'lineChart',
-          height: 450,
+          height: Number($scope.height),
           margin : {
             top: 20,
             right: 20,
@@ -68,7 +69,7 @@
         }
       };
  
-      $scope.selectedZoom = "week";
+      $scope.selectedZoom = "minute";
       $scope.selectedHost = $scope.nodes.nodesNames[0];
 
       $scope.onParamsChange = onParamsChange;
@@ -94,6 +95,7 @@
           })
           .subscribe(function (stats) {
             breakInterval = stats[0].data.interval * 2.5;
+            console.log(stats)
             if ($scope.chartData) {
               angular.forEach(stats, function (stat, index) {
                 $scope.chartData[index].values.shift();

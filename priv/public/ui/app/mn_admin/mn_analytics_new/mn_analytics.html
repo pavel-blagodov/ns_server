@@ -33,13 +33,24 @@
         <span>{{block.blockName}} Statistics</span>
         <span ng-click="analyticsNewCtl.openChartBuilderDialog(block.blockName)">+ Add Data Chart</span>
       </h4>
+      <!-- config.size can be -->
+      <!-- 100 -->
+      <!-- 220 -->
+      <!-- 450 -->
+      <style>
+        .analytics-120 {width: 25%; float: left;}
+        .analytics-270 {width: 50%; float: left;}
+        .analytics-450 {width: 100%; float: left;}
+      </style>
       <div
          ng-if="analyticsNewCtl.nodes"
-         ng-repeat="(id, stats) in analyticsNewCtl.analyticsService.chartsByBlock[block.blockName]"
+         ng-repeat="config in analyticsNewCtl.analyticsService.chartsByBlock[block.blockName] | orderBy:'size':true"
          mn-analytics-chart
          nodes="analyticsNewCtl.nodes"
-         stats="stats"
-         id="{{id}}"
+         stats="config.stats"
+         height="config.size"
+         ng-class="'analytics-' + config.size"
+         id="{{config.id}}"
          holder="analyticsNewCtl.analyticsService.chartsByBlock[block.blockName]">
       </div>
     </div>

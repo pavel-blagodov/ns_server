@@ -16,6 +16,28 @@
          ng-model="chartBuilderCtl.newChart.stats[$index]"><label for="stat-{{stat.name}}-checkbox">{{stat.title}}</label>
     </li>
   </ul>
+  <h4>Select Size</h4>
+  <input
+     type="radio"
+     id="chart-small-radio"
+     ng-model="chartBuilderCtl.newChart.size"
+     value="120">
+  <label
+     for="chart-small-radio">S</label>
+  <input
+     type="radio"
+     id="chart-medium-radio"
+     ng-model="chartBuilderCtl.newChart.size"
+     value="270">
+  <label
+     for="chart-medium-radio">M</label>
+  <input
+     type="radio"
+     id="chart-large-radio"
+     ng-model="chartBuilderCtl.newChart.size"
+     value="450">
+  <label
+     for="chart-large-radio">L</label>
   <div>
     <a ng-click="$dismiss()">Cancel</a>
     <button type="submit">Display Selected Stats</button>
