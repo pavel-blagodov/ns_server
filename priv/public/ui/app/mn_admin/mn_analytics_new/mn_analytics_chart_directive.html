@@ -1,4 +1,19 @@
+<span>by
+  <select ng-model="selectedZoom" ng-change="onParamsChange()">
+    <option value="minute">minute</option>
+    <option value="hour">hour</option>
+    <option value="day">day</option>
+    <option value="week">week</option>
+    <option value="month">month</option>
+  </select>
+</span>
+<span>
+  <select ng-model="selectedHost" ng-change="onParamsChange()">
+    <option ng-repeat="hostname in nodes.nodesNames" value="{{hostname}}">{{hostname}}</option>
+  </select>
+</span>
 <nvd3
+  api="chartApi"
   options="options"
   data="chartData"
   ></nvd3>

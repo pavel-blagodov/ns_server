@@ -23,13 +23,25 @@
     return mnAnalyticsNewService;
 
 
-    function getBunchOfStats(stats) {
+    function getBunchOfStats(stats, zoom, prev) {
       var querise = [];
+      
       angular.forEach(stats, function (stat, statName) {
-        querise.push($http.get(stat.specificStatsURL))
+        querise.push($http({
+          method: "GET",
+          url: stat.specificStatsURL,
+          params: {
+            resampleForUI: true, 
+            zoom: zoom,
+            haveTStamp: prev && prev[0].data.lastTStamp
+          }
+        }))
       });
       return $q.all(querise).then(function (resp) {
-        return resp;
+        return _.map(resp, function (resp, index) {
+          resp.statDescription = stats[index];
+          return resp;
+        });
       });
     }
 
