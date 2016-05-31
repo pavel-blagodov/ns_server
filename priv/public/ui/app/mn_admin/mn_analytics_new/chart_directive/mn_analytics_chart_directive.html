@@ -12,6 +12,7 @@
     <option ng-repeat="hostname in nodes.nodesNames" value="{{hostname}}">{{hostname}}</option>
   </select>
 </span>
+<span ng-click="editChart(id)">Edit</span>
 <nvd3
   api="chartApi"
   options="options"

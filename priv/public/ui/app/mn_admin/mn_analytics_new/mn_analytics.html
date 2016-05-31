@@ -44,14 +44,14 @@
       </style>
       <div
          ng-if="analyticsNewCtl.nodes"
-         ng-repeat="config in analyticsNewCtl.analyticsService.chartsByBlock[block.blockName] | orderBy:'size':true"
+         ng-repeat="config in analyticsNewCtl.analyticsService.charts[block.blockName] | orderBy:'size':true"
          mn-analytics-chart
          nodes="analyticsNewCtl.nodes"
          stats="config.stats"
          height="config.size"
          ng-class="'analytics-' + config.size"
          id="{{config.id}}"
-         holder="analyticsNewCtl.analyticsService.chartsByBlock[block.blockName]">
+         block-name="{{block.blockName}}">
       </div>
     </div>
   </div>

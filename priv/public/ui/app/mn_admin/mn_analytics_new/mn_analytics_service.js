@@ -11,7 +11,7 @@
       getStatsDirectory: getStatsDirectory,
       getBunchOfStats: getBunchOfStats,
       export: {
-        chartsByBlock: JSON.parse(localStorage.getItem('mnAnalyticsNewCharts')) || {}
+        charts: JSON.parse(localStorage.getItem('mnAnalyticsNewCharts')) || {}
       }
     };
 

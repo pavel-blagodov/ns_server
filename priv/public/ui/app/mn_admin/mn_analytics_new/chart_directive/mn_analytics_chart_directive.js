@@ -2,27 +2,32 @@
   "use strict"
 
   angular
-    .module('mnAnalyticsChart', [])
+    .module('mnAnalyticsChart', [
+      "mnAnalyticsNewService",
+      "ui.bootstrap",
+      "mnPoll"
+    ])
     .directive("mnAnalyticsChart", mnAnalyticsNewChartDirective);
 
-  function mnAnalyticsNewChartDirective(mnAnalyticsNewService) {
+  function mnAnalyticsNewChartDirective(mnAnalyticsNewService, $uibModal, $state, mnPoller) {
     return {
       restrict: 'A',
       templateUrl: 'app/mn_admin/mn_analytics_new/chart_directive/mn_analytics_chart_directive.html',
       scope: {
         stats: "=",
         id: "@",
-        holder: "=",
+        blockName: "@",
         nodes: "=",
         height: "="
       },
       controller: controller
     };
 
-    function controller($scope, mnPoller) {
+    function controller($scope) {
       var breakInterval;
       var poller;
 
+      $scope.editChart = editChart;
       $scope.selectedZoom = "minute";
       $scope.selectedHost = $scope.nodes.nodesNames[0];
       $scope.onParamsChange = onParamsChange;
@@ -42,8 +47,11 @@
               return
             }
             var prev = $scope.chartData[item.series].values[index - 1];
-            if (item[0] > ((prev && (prev[0] + breakInterval)) || 1e+20)) {
-              return false;
+            console.log(item[0],  (prev && prev[0] + breakInterval), prev && prev[0])
+            if (prev) {
+              if (item[0] > (prev[0] + breakInterval)) {
+                return false;
+              }
             }
             return true;
           },
@@ -70,9 +78,29 @@
         activate();
       }
 
+      function editChart(id) {
+        $uibModal.open({
+          templateUrl: 'app/mn_admin/mn_analytics_new/chart_builder/mn_analytics_chart_builder.html',
+          controller: 'mnAnalyticsNewChartBuilderController as chartBuilderCtl',
+          resolve: {
+            bucketName: function () {
+              return $state.params.analyticsBucket;
+            },
+            blockName: function () {
+              return $scope.blockName;
+            },
+            chart: function () {
+              return  _.find(mnAnalyticsNewService.export.charts[$scope.blockName], function (chart) {
+                return chart.id === Number(id);
+              });
+            }
+          }
+        });
+      }
+
       function onParamsChange() {
-        delete $scope.chartData;
         $scope.chartApi.refresh();
+        $scope.chartData = [];
         delete poller.latestResult;
         $scope.$broadcast("reloadChartPoller");
       }
@@ -89,8 +117,8 @@
           .cycle();
       }
       function onPoller(stats) {
-        breakInterval = stats[0].data.interval * 2.5;
-        if ($scope.chartData) {
+        breakInterval = stats[0].data.interval * 2.5 || 1e+20;
+        if ($scope.chartData && $scope.chartData.length) {
           angular.forEach(stats, function (stat, index) {
             $scope.chartData[index].values.shift();
             $scope.chartData[index].values.push([

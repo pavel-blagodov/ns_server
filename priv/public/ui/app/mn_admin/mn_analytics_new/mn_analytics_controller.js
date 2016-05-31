@@ -37,6 +37,9 @@
           },
           blockName: function () {
             return directoryName;
+          },
+          chart: function () {
+            return;
           }
         }
       });
