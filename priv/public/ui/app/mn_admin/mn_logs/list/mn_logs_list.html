@@ -1,5 +1,7 @@
-<div id="logs_container" mn-spinner="!logsListCtl.logs" min-height="100px">
-<table class="lined_tab">
+<div
+   mn-spinner="!logsListCtl.logs"
+   min-height="100px">
+<table>
   <colgroup>
     <col style="width: 55%;">
     <col style="width: 15%;">
@@ -34,7 +36,7 @@
       </td>
       <td>{{row.module}} {{row.code | moduleCode }}</td>
       <td>{{row.node}}</td>
-      <td class="text_11 nobr">
+      <td>
         <strong>{{row.serverTime | date:'mediumTime':'UTC'}}</strong>
         {{row.serverTime | date:'EEE MMM d, yyyy'}}
       </td>
